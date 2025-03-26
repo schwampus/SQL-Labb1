@@ -1,0 +1,116 @@
+CREATE DATABASE Labb1HJ;
+
+-- Skapar tabell för kokbok
+CREATE TABLE kokbok(
+    kokbokID INT NOT NULL AUTO_INCREMENT,
+    kokbokNamn VARCHAR(40),
+    kokbokForfattare VARCHAR(40),
+    PRIMARY KEY (kokbokID)
+   );
+
+-- Skapar tabell för matratt
+CREATE TABLE matratt(
+    matrattID INT NOT NULL AUTO_INCREMENT,
+    matrattNamn VARCHAR(40),
+    matrattBeskrivning VARCHAR(40),
+    PRIMARY KEY (matrattID)
+   );
+
+-- Skapar tabell för recept
+CREATE TABLE recept(
+   receptID INT NOT NULL AUTO_INCREMENT,
+   receptNamn VARCHAR(40),
+   receptText LONGTEXT,
+   receptMatratt INT,
+   receptKokbok INT,
+   PRIMARY KEY (receptID),
+   FOREIGN KEY (receptMatratt) REFERENCES matratt(matrattID),
+   FOREIGN KEY (receptKokbok) REFERENCES kokbok(kokbokID)
+);
+
+
+-- Skapar tabell för mängd
+CREATE TABLE enhet(
+    enhetID INT NOT NULL AUTO_INCREMENT,
+    enhetNamn VARCHAR(40),
+    PRIMARY KEY (enhetID)
+   );
+
+-- Skapar tabell för Ingrediens
+CREATE TABLE ingrediens(
+    ingrediensID INT NOT NULL AUTO_INCREMENT,
+    ingrediensNamn VARCHAR(40),
+    ingrediensEnhet INT,
+    PRIMARY KEY (ingrediensID),
+    FOREIGN KEY (ingrediensEnhet) REFERENCES enhet(enhetID)
+   );
+
+-- Skapar tabell för ReceptIngrediens
+CREATE TABLE receptingrediens(
+    receptIngrediensID INT NOT NULL AUTO_INCREMENT,
+    receptIngrediensRID INT NOT NULL,
+    receptIngrediensIID INT NOT NULL,
+    mangd INT NOT NULL,
+    PRIMARY KEY (receptIngrediensID),
+    FOREIGN KEY (receptIngrediensRID) REFERENCES recept(receptID),
+    FOREIGN KEY (receptIngrediensIID) REFERENCES ingrediens(ingrediensID)
+   );
+-- ------------------------------------------------------------------------------------------------------
+
+-- Lägg till lite kokböcker
+INSERT INTO kokbok ( kokbokNamn, kokbokForfattare)
+VALUES ('Bonniers Kokbok', 'Fredrik Eriksson'),
+       ('Vår Kokbok VEGO', 'Sara Begner'),
+       ('Fattig student : 20 veckomenyer under 250 kronor', 'Karen Elene Thorsen'),
+       ('Plåtmat : grönt i en långpanna','Julia Tuvesson'),
+       ('Mannerströms stora kokbok','Leif Mannerström'),
+       ('Ekstedt grillar / Knep och hemligheter', 'Niklas Ekstedt'),
+       ('My Kitchen Table: 100 Pasta Recipes','Antonio Carluccio');
+
+-- ändrar på maträtts beskriving från varchar40 eftersom mer text behövs
+ALTER TABLE matratt
+MODIFY COLUMN matrattBeskrivning TEXT;
+
+-- Lägg till maträtter
+INSERT INTO matratt ( matrattNamn, matrattBeskrivning)
+VALUES ('Pasta Carbonara','Pasta Carbonara är en klassisk italiensk rätt med krämig sås gjord på ägg, pecorinoost, guanciale och svartpeppar. Den serveras vanligtvis med spaghetti och har en rik, fyllig smak utan grädde.'),
+       ('Paj','Paj är en mångsidig maträtt med en krispig deg som kan fyllas med både söta och salta ingredienser. Vanliga varianter inkluderar fruktpajer som äppelpaj och matpajer som ost- och skinkpaj.'),
+       ('Köttbullar','Köttbullar är en klassisk svensk rätt, vanligtvis gjord på nöt- eller blandfärs, kryddad med lök, salt och peppar. De serveras ofta med potatismos, brunsås, lingonsylt och inlagd gurka.'),
+       ('Lasagne','Lasagne är en italiensk pastarätt som består av lager med pastaplattor, köttfärssås, béchamelsås och ost. Den gratineras i ugnen till en gyllene yta och har en rik och krämig smak.'),
+       ('Tacos','Tacos är en mexikansk rätt där mjuka eller hårda tortillabröd fylls med kryddat kött, grönsaker, ost och olika såser. Rätten är mångsidig och kan anpassas med ingredienser som guacamole, salsa och gräddfil.'),
+       ('Biff Rydberg','Biff Rydberg är en lyxig svensk maträtt som består av tärnad oxfilé, stekt potatis och lök, ofta serverad med senapskräm och en rå äggula. Rätten är en finare variant av pytt i panna och har en rik och fyllig smak.'),
+       ('Pannkakor','Pannkakor är en populär rätt som består av en tunn smet av mjöl, ägg, mjölk och socker, som steks till gyllenbruna plättar. De kan serveras med olika tillbehör som sylt, grädde, bär eller socker.'),
+       ('Korv Stroganoff','Korv Stroganoff är en svensk husmanskost där skivad korv kokas i en krämig sås med lök, senap, tomatpuré och grädde. Rätten serveras vanligtvis med ris eller potatis och har en mild, smakrik och lätt kryddad smak.'),
+       ('Kreolsk Gryta','Kreolsk gryta är en smakrik rätt från Louisiana, som ofta innehåller en blandning av kött, skaldjur, paprika, lök, tomater och kryddor som cayennepeppar och vitlök. Den har en robust smakprofil och serveras vanligtvis med ris för att balansera de kryddiga smakerna.'),
+       ('Spaghetti Bolgonese','Spaghetti Bolognese är en klassisk italiensk rätt där spaghetti serveras med en rik köttfärssås baserad på nötkött, tomater, lök, vitlök och kryddor. Såsen får koka långsamt för att utveckla djupa, fylliga smaker och är ofta toppad med riven parmesan.'),
+       ('Butter Chicken','Butter Chicken är en populär indisk rätt där kycklingbitar tillagas i en krämig och smakrik tomatsås med smör, grädde och en blandning av kryddor som garam masala och chili. Den serveras vanligtvis med basmatiris eller naanbröd och har en mild men fyllig smak.'),
+       ('Panang Curry','Panang Curry är en thailändsk rätt som består av en smakrik och krämig currysås med kokosmjölk, röd currypasta, och ofta nötkött eller kyckling. Den har en mildare hetta än andra thailändska curryrätter och är aromatiskt kryddad med kaffir limeblad och basilika.'),
+       ('Bibimbap','Bibimbap är en koreansk rätt som består av en skål med ris toppad med olika grönsaker, kimchi, kött (ofta nötkött), ett stekt ägg och en smakrik gochujang-sås. Rätten blandas ofta innan den äts, vilket ger en härlig kombination av smaker och texturer.'),
+       ('Ramen','Ramen är en japansk nudelsoppa som består av vetenudlar i en smakrik buljong, ofta baserad på soja, miso eller shoyu. Den toppas vanligtvis med ingredienser som kokt ägg, skivad fläskkött, grönsaker och nori, vilket ger en umamirik och värmande måltid.'),
+       ('Tikka Masala','Tikka Masala är en populär indisk rätt där marinerad och grillad kyckling tillagas i en krämig tomatbaserad sås med en blandning av kryddor som garam masala, ingefära och vitlök. Rätten är både aromatisk och mild, och serveras ofta med ris eller naanbröd för att balansera de rika smakerna.'),
+       ('Hamburgare','Hamburgare är en klassisk snabbmatsrätt som består av en saftig biff av nötkött, ofta serverad i ett mjukt bröd tillsammans med olika tillbehör som sallad, tomat, lök, ost, ketchup och senap. Rätten är populär för sin enkla, men välsmakande kombination av smaker och kan varieras med olika fyllningar och såser.'),
+       ('Gulaschsoppa','Gulaschsoppa är en mustig och kryddig soppa med ursprung i Ungern, baserad på nötkött, paprika, lök och potatis. Den har en djup, rik smak och serveras ofta med ett gott bröd för att suga upp den smakfulla buljongen.');
+
+-- Lägg till recept i carbonara kategorin
+INSERT INTO recept ( receptNamn, receptText, receptMatratt, receptKokbok)
+VALUES ('Traditionell Pasta Carbonara','Instruktioner: 1. Koka spaghetti i rikligt med saltat vatten enligt anvisningarna på förpackningen tills den är al dente. 2. Under tiden, skär guanciale eller pancetta i små bitar och stek i en panna med lite olivolja på medelhög värme tills den blir krispig och släpper ut sitt fett, cirka 5-7 minuter. 3. Vispa äggen i en skål och blanda i den rivna pecorinon och parmesanosten. Smaka av med svartpeppar. Sätt åt sidan. 4. När pastan är klar, spara en kopp pastavatten och häll av resten. Lägg den heta pastan direkt i pannan med guancialen och rör om så att pastan täcks av fettet. 5. Ta bort pannan från värmen och häll ägg- och ostblandningen över pastan. Rör snabbt så att äggen inte koagulerar utan bildar en krämig sås. Tillsätt lite pastavatten om såsen blir för tjock. 6. Smaka av med salt och extra svartpeppar. Servera genast med mer riven ost om så önskas. Buon appetito!', 1, 7),
+    ('GlennBonara','En svensk tappning av Pasta Carbonara som görs på makaroner och falukorv istället. Instruktioner: 1. Koka makaronerna enligt anvisningarna på förpackningen. Spara en liten del av pastavattnet för att eventuellt tunna ut såsen senare. 2. Hetta upp smöret eller oljan i en stor stekpanna på medelhög värme. Stek falukorven tills den får en fin gyllenbrun yta, cirka 5-7 minuter. 3. Tillsätt den hackade löken i pannan och fräs tills den blir mjuk och genomskinlig. 4. Häll i grädden och låt det sjuda i några minuter tills såsen börjar tjockna. 5. Tillsätt den rivna prästosten och rör om tills osten smälter och såsen blir krämig. Smaka av med salt, peppar och eventuellt en tesked senap för extra smak. 6. När makaronerna är färdigkokta, häll av vattnet och blanda dem i såsen. Om såsen är för tjock, tillsätt lite av pastavattnet för att få önskad konsistens. 7. Servera genast, gärna toppad med färsk persilja för en extra färgklick. ', 1, 3),
+    ('Vegetarisk Pasta Carbonara','Instruktioner: 1. Koka pastan i rikligt med saltat vatten enligt anvisningarna på förpackningen. Spara lite pastavatten för att tunna ut såsen vid behov. 2. Hetta upp olivoljan i en stor stekpanna på medelhög värme. Stek den tärnade rökt tofu eller vegetariska baconbitar tills de blir krispiga, cirka 5–7 minuter. Tillsätt hackad lök och vitlök och stek tills löken mjuknar. 3. Vispa ihop grädden och äggen i en skål (eller kikärtsspad om du gör en vegansk version). Tillsätt den rivna parmesanen och smaka av med svartpeppar. 4. När pastan är klar, häll av vattnet och blanda den direkt med tofu- och lökblandningen i pannan. Ta bort pannan från värmen. 5. Häll ägg- och gräddblandningen över pastan och rör om snabbt så att såsen blir krämig och täcker pastan. Om såsen känns för tjock, tillsätt lite av pastavattnet för att justera konsistensen. 6. Smaka av med mer svartpeppar och eventuellt lite salt. Servera genast, gärna med mer riven ost eller ett veganskt alternativ. Smaklig måltid!', 1, 2);
+
+-- Lägg till enheter
+INSERT INTO enhet (enhetNamn)
+VALUES ('Styck'), ('Gram'), ('dl'), ('cl'), ('msk'), ('tsk'), ('krm');
+
+
+
+
+
+
+SELECT *
+FROM kokbok;
+
+SELECT *
+FROM matratt;
+
+SELECT *
+FROM recept;
