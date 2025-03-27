@@ -1,0 +1,313 @@
+CREATE DATABASE Labb1HJ;
+
+-- Skapar tabell för kokbok
+CREATE TABLE kokbok(
+    kokbokID INT NOT NULL AUTO_INCREMENT,
+    kokbokNamn VARCHAR(40),
+    kokbokForfattare VARCHAR(40),
+    PRIMARY KEY (kokbokID)
+   );
+
+-- Skapar tabell för matratt
+CREATE TABLE matratt(
+    matrattID INT NOT NULL AUTO_INCREMENT,
+    matrattNamn VARCHAR(40),
+    matrattBeskrivning VARCHAR(40),
+    PRIMARY KEY (matrattID)
+   );
+
+-- Skapar tabell för recept
+CREATE TABLE recept(
+   receptID INT NOT NULL AUTO_INCREMENT,
+   receptNamn VARCHAR(40),
+   receptText LONGTEXT,
+   receptMatratt INT,
+   receptKokbok INT,
+   PRIMARY KEY (receptID),
+   FOREIGN KEY (receptMatratt) REFERENCES matratt(matrattID),
+   FOREIGN KEY (receptKokbok) REFERENCES kokbok(kokbokID)
+);
+
+
+-- Skapar tabell för mängd
+CREATE TABLE enhet(
+    enhetID INT NOT NULL AUTO_INCREMENT,
+    enhetNamn VARCHAR(40) UNIQUE ,
+    PRIMARY KEY (enhetID)
+   );
+
+-- Skapar tabell för Ingrediens
+CREATE TABLE ingrediens(
+    ingrediensID INT NOT NULL AUTO_INCREMENT,
+    ingrediensNamn VARCHAR(40),
+    ingrediensEnhet INT,
+    PRIMARY KEY (ingrediensID),
+    FOREIGN KEY (ingrediensEnhet) REFERENCES enhet(enhetID)
+   );
+
+-- Skapar tabell för ReceptIngrediens
+CREATE TABLE receptingrediens(
+    receptIngrediensID INT NOT NULL AUTO_INCREMENT,
+    receptIngrediensRID INT NOT NULL,
+    receptIngrediensIID INT NOT NULL,
+    mangd INT NOT NULL,
+    PRIMARY KEY (receptIngrediensID),
+    FOREIGN KEY (receptIngrediensRID) REFERENCES recept(receptID),
+    FOREIGN KEY (receptIngrediensIID) REFERENCES ingrediens(ingrediensID)
+   );
+-- ------------------------------------------------------------------------------------------------------
+
+-- Lägg till lite kokböcker
+INSERT INTO kokbok ( kokbokNamn, kokbokForfattare)
+VALUES ('Bonniers Kokbok', 'Fredrik Eriksson'),
+       ('Vår Kokbok VEGO', 'Sara Begner'),
+       ('Fattig student : 20 veckomenyer under 250 kronor', 'Karen Elene Thorsen'),
+       ('Plåtmat : grönt i en långpanna','Julia Tuvesson'),
+       ('Mannerströms stora kokbok','Leif Mannerström'),
+       ('Ekstedt grillar / Knep och hemligheter', 'Niklas Ekstedt'),
+       ('My Kitchen Table: 100 Pasta Recipes','Antonio Carluccio');
+
+-- ändrar på maträtts beskriving från varchar40 eftersom mer text behövs
+ALTER TABLE matratt
+MODIFY COLUMN matrattBeskrivning TEXT;
+
+-- Lägg till maträtter
+INSERT INTO matratt ( matrattNamn, matrattBeskrivning)
+VALUES ('Pasta Carbonara','Pasta Carbonara är en klassisk italiensk rätt med krämig sås gjord på ägg, pecorinoost, guanciale och svartpeppar. Den serveras vanligtvis med spaghetti och har en rik, fyllig smak utan grädde.'),
+       ('Paj','Paj är en mångsidig maträtt med en krispig deg som kan fyllas med både söta och salta ingredienser. Vanliga varianter inkluderar fruktpajer som äppelpaj och matpajer som ost- och skinkpaj.'),
+       ('Köttbullar','Köttbullar är en klassisk svensk rätt, vanligtvis gjord på nöt- eller blandfärs, kryddad med lök, salt och peppar. De serveras ofta med potatismos, brunsås, lingonsylt och inlagd gurka.'),
+       ('Lasagne','Lasagne är en italiensk pastarätt som består av lager med pastaplattor, köttfärssås, béchamelsås och ost. Den gratineras i ugnen till en gyllene yta och har en rik och krämig smak.'),
+       ('Tacos','Tacos är en mexikansk rätt där mjuka eller hårda tortillabröd fylls med kryddat kött, grönsaker, ost och olika såser. Rätten är mångsidig och kan anpassas med ingredienser som guacamole, salsa och gräddfil.'),
+       ('Biff Rydberg','Biff Rydberg är en lyxig svensk maträtt som består av tärnad oxfilé, stekt potatis och lök, ofta serverad med senapskräm och en rå äggula. Rätten är en finare variant av pytt i panna och har en rik och fyllig smak.'),
+       ('Pannkakor','Pannkakor är en populär rätt som består av en tunn smet av mjöl, ägg, mjölk och socker, som steks till gyllenbruna plättar. De kan serveras med olika tillbehör som sylt, grädde, bär eller socker.'),
+       ('Korv Stroganoff','Korv Stroganoff är en svensk husmanskost där skivad korv kokas i en krämig sås med lök, senap, tomatpuré och grädde. Rätten serveras vanligtvis med ris eller potatis och har en mild, smakrik och lätt kryddad smak.'),
+       ('Kreolsk Gryta','Kreolsk gryta är en smakrik rätt från Louisiana, som ofta innehåller en blandning av kött, skaldjur, paprika, lök, tomater och kryddor som cayennepeppar och vitlök. Den har en robust smakprofil och serveras vanligtvis med ris för att balansera de kryddiga smakerna.'),
+       ('Spaghetti Bolgonese','Spaghetti Bolognese är en klassisk italiensk rätt där spaghetti serveras med en rik köttfärssås baserad på nötkött, tomater, lök, vitlök och kryddor. Såsen får koka långsamt för att utveckla djupa, fylliga smaker och är ofta toppad med riven parmesan.'),
+       ('Butter Chicken','Butter Chicken är en populär indisk rätt där kycklingbitar tillagas i en krämig och smakrik tomatsås med smör, grädde och en blandning av kryddor som garam masala och chili. Den serveras vanligtvis med basmatiris eller naanbröd och har en mild men fyllig smak.'),
+       ('Panang Curry','Panang Curry är en thailändsk rätt som består av en smakrik och krämig currysås med kokosmjölk, röd currypasta, och ofta nötkött eller kyckling. Den har en mildare hetta än andra thailändska curryrätter och är aromatiskt kryddad med kaffir limeblad och basilika.'),
+       ('Bibimbap','Bibimbap är en koreansk rätt som består av en skål med ris toppad med olika grönsaker, kimchi, kött (ofta nötkött), ett stekt ägg och en smakrik gochujang-sås. Rätten blandas ofta innan den äts, vilket ger en härlig kombination av smaker och texturer.'),
+       ('Ramen','Ramen är en japansk nudelsoppa som består av vetenudlar i en smakrik buljong, ofta baserad på soja, miso eller shoyu. Den toppas vanligtvis med ingredienser som kokt ägg, skivad fläskkött, grönsaker och nori, vilket ger en umamirik och värmande måltid.'),
+       ('Tikka Masala','Tikka Masala är en populär indisk rätt där marinerad och grillad kyckling tillagas i en krämig tomatbaserad sås med en blandning av kryddor som garam masala, ingefära och vitlök. Rätten är både aromatisk och mild, och serveras ofta med ris eller naanbröd för att balansera de rika smakerna.'),
+       ('Hamburgare','Hamburgare är en klassisk snabbmatsrätt som består av en saftig biff av nötkött, ofta serverad i ett mjukt bröd tillsammans med olika tillbehör som sallad, tomat, lök, ost, ketchup och senap. Rätten är populär för sin enkla, men välsmakande kombination av smaker och kan varieras med olika fyllningar och såser.'),
+       ('Gulaschsoppa','Gulaschsoppa är en mustig och kryddig soppa med ursprung i Ungern, baserad på nötkött, paprika, lök och potatis. Den har en djup, rik smak och serveras ofta med ett gott bröd för att suga upp den smakfulla buljongen.');
+
+-- Lägg till recept i carbonara-kategorin
+INSERT INTO recept ( receptNamn, receptText, receptMatratt, receptKokbok)
+VALUES ('Traditionell Pasta Carbonara','Instruktioner: 1. Koka spaghetti i rikligt med saltat vatten enligt anvisningarna på förpackningen tills den är al dente. 2. Under tiden, skär guanciale eller pancetta i små bitar och stek i en panna med lite olivolja på medelhög värme tills den blir krispig och släpper ut sitt fett, cirka 5-7 minuter. 3. Vispa äggen i en skål och blanda i den rivna pecorinon och parmesanosten. Smaka av med svartpeppar. Sätt åt sidan. 4. När pastan är klar, spara en kopp pastavatten och häll av resten. Lägg den heta pastan direkt i pannan med guancialen och rör om så att pastan täcks av fettet. 5. Ta bort pannan från värmen och häll ägg- och ostblandningen över pastan. Rör snabbt så att äggen inte koagulerar utan bildar en krämig sås. Tillsätt lite pastavatten om såsen blir för tjock. 6. Smaka av med salt och extra svartpeppar. Servera genast med mer riven ost om så önskas. Buon appetito!', 1, 7),
+    ('GlennBonara','En svensk tappning av Pasta Carbonara. Instruktioner: 1. Koka makaronerna enligt anvisningarna på förpackningen. Spara en liten del av pastavattnet för att eventuellt tunna ut såsen senare. 2. Hetta upp smöret eller oljan i en stor stekpanna på medelhög värme. Stek falukorven tills den får en fin gyllenbrun yta, cirka 5-7 minuter. 3. Tillsätt den hackade löken i pannan och fräs tills den blir mjuk och genomskinlig. 4. Häll i grädden och låt det sjuda i några minuter tills såsen börjar tjockna. 5. Tillsätt den rivna prästosten och rör om tills osten smälter och såsen blir krämig. Smaka av med salt, peppar och eventuellt en tesked senap för extra smak. 6. När makaronerna är färdigkokta, häll av vattnet och blanda dem i såsen. Om såsen är för tjock, tillsätt lite av pastavattnet för att få önskad konsistens. 7. Servera genast, gärna toppad med färsk persilja för en extra färgklick. ', 1, 3),
+    ('Vegetarisk Pasta Carbonara','Instruktioner: 1. Koka pastan i rikligt med saltat vatten enligt anvisningarna på förpackningen. Spara lite pastavatten för att tunna ut såsen vid behov. 2. Hetta upp olivoljan i en stor stekpanna på medelhög värme. Stek den tärnade rökt tofu eller vegetariska baconbitar tills de blir krispiga, cirka 5–7 minuter. Tillsätt hackad lök och vitlök och stek tills löken mjuknar. 3. Vispa ihop grädden och äggen i en skål (eller kikärtsspad om du gör en vegansk version). Tillsätt den rivna parmesanen och smaka av med svartpeppar. 4. När pastan är klar, häll av vattnet och blanda den direkt med tofu- och lökblandningen i pannan. Ta bort pannan från värmen. 5. Häll ägg- och gräddblandningen över pastan och rör om snabbt så att såsen blir krämig och täcker pastan. Om såsen känns för tjock, tillsätt lite av pastavattnet för att justera konsistensen. 6. Smaka av med mer svartpeppar och eventuellt lite salt. Servera genast, gärna med mer riven ost eller ett veganskt alternativ. Smaklig måltid!', 1, 2);
+
+-- Lägg till recept i paj-kategorin
+INSERT INTO recept ( receptNamn, receptText, receptMatratt, receptKokbok)
+VALUES ('Klassisk Västerbottenpaj','Instruktioner: 1.Sätt ugnen på 200°C. 2.Nyp ihop smör och vetemjöl till en smulig deg, tillsätt vattnet och forma till en boll. Låt vila i kylen i 30 minuter. 3.Kavla ut degen och klä en pajform (cirka 24 cm). Nagga botten och förgrädda i 10 minuter. 4.Vispa ihop ägg, grädde och mjölk. Tillsätt riven ost och krydda med salt och peppar. 5.Häll fyllningen i pajskalet och grädda i 25–30 minuter tills pajen fått fin färg. 6. Låt svalna något innan servering.', 2,5),
+       ('Stefans Krämiga Kycklingpaj','Instruktioner: 1. Förbered pajdegen enligt instruktionerna för Västerbottenpaj och förgrädda. 2. Strimla kycklingen och stek tillsammans med hackad lök. Krydda med timjan, paprikapulver, salt och peppar. 3. Blanda i crème fraiche och låt sjuda någon minut. 4. Häll fyllningen i pajskalet, strö över riven ost och grädda i 20–25 minuter tills pajen fått fin färg. 5. Servera gärna med en fräsch sallad.', 2,1),
+       ('Stinas Veganska Grönsakspaj','Instruktioner: 1.Förbered pajdegen enligt de andra recepten och förgrädda i 10 minuter vid 200°C. 2. Skär zucchinin och paprikan i bitar. Hacka löken och stek tillsammans med grönsakerna tills de mjuknat. 3. Blanda havregrädde, kikärtsmjöl, näringsjäst och kryddor till en slät smet. 4. Lägg grönsakerna i pajskalet och häll över fyllningen. 5. Grädda i 25–30 minuter tills pajen har fått en fin yta. 6. Låt svalna något innan servering.', 2,2);
+
+-- Lägg till recept i köttbullar-kategorin
+INSERT INTO recept ( receptNamn, receptText, receptMatratt, receptKokbok)
+VALUES ('Klassiska Svenska Köttbullar','Instruktioner: 1. Blanda ströbröd och mjölk i en skål och låt svälla i 5 minuter. 2. Finhacka löken och fräs den mjuk i lite smör. 3. Blanda färsen med det svällda ströbrödet, lök, ägg, salt, svartpeppar och kryddpeppar. Rör ihop till en jämn smet. 4. Forma små köttbullar och lägg dem på en fuktad skärbräda. 5. Hetta upp smör i en stekpanna och stek köttbullarna på medelhög värme i cirka 5–7 minuter tills de fått fin färg och är genomstekta. 6. Servera med potatismos, lingonsylt och brunsås.',3,1),
+       ('Vegetariska Köttbullar med Kikärtor','Instruktioner: 1. Skölj kikärtorna och mosa dem grovt med en gaffel eller mixa lätt. 2. Blanda ströbröd och havremjölk i en skål och låt svälla i 5 minuter. 3. Finhacka löken och vitlöken, och fräs dem mjuka i lite olivolja. 4. Blanda kikärtorna med den svällda ströbrödsblandningen, lök, vitlök, soja, kryddor och maizena. 5. Forma små bollar och låt dem vila i kylskåp i 15 minuter så att de håller formen bättre. 6. Hetta upp olja i en stekpanna och stek bollarna på medelhög värme i cirka 5 minuter tills de fått fin färg. 7. Servera med potatismos, lingonsylt och gräddsås eller en fräsch sallad.',3,3);
+
+-- Lägg till recept i köttbullar-kategorin
+INSERT INTO recept ( receptNamn, receptText, receptMatratt, receptKokbok)
+VALUES ('Klassisk Korv Stroganoff','Instruktioner: 1. Skär falukorven i strimlor. Hacka löken fint. 2. Hetta upp smöret i en stekpanna och fräs löken tills den blir mjuk. 3. Lägg i korven och stek tills den får en lätt gyllenbrun färg. 4. Tillsätt tomatpuré, krossade tomater, dijonsenap och paprikapulver. Rör om och låt koka ihop i några minuter. 5. Häll i matlagningsgrädden och låt småputtra i 5 minuter. Smaka av med salt och peppar. 6. Servera med ris eller potatismos och gärna en grönsallad vid sidan av.',8,1),
+       ('Curry Stroganoff ','Instruktioner: 1. Skär falukorven i strimlor. Hacka löken fint. 2. Hetta upp rapsoljan i en stekpanna och fräs löken tills den blir mjuk. 3´. Lägg i korven och stek tills den får en lätt gyllenbrun färg. 4. Tillsätt curry, spiskummin och paprikapulver. Rör om och låt kryddorna fräsa i någon minut för att utveckla smakerna. 5. Häll i tomatpuré och kokosmjölk. Låt småputtra i 5 minuter tills såsen tjocknar något. Smaka av med salt och peppar. 6. Servera med ris och gärna färsk koriander för extra smak.',8,5);
+
+-- Lägg till recept i bolgonese-kategorin
+INSERT INTO recept ( receptNamn, receptText, receptMatratt, receptKokbok)
+VALUES ('Spaghetti Bolognese','Instruktioner: 1. Finhacka lök och vitlök. Riv morötterna grovt. 2. Hetta upp olivolja i en stekpanna och fräs lök och vitlök tills de blir mjuka. 3. Lägg i nötfärsen och stek tills den är genomstekt. Tillsätt de rivna morötterna och rör om. 4. Häll i tomatpuré och rör om. Tillsätt krossade tomater, vatten, oregano, basilika, salt och peppar. Låt småputtra i minst 15 minuter. 5. Koka spaghettin enligt anvisningarna på förpackningen. 6. Servera såsen med nykokt spaghetti och gärna riven parmesan på toppen.',10 ,7 ),
+       ('Vegetarisk Lins-Bolognese','Instruktioner: 1. Skölj linserna i kallt vatten. 2. Finhacka lök och vitlök. Riv morötterna grovt. 3. Hetta upp olivolja i en stekpanna och fräs lök och vitlök tills de blir mjuka. 4. Lägg i de rivna morötterna och stek i någon minut. 5. Tillsätt tomatpuré och rör om. Häll i krossade tomater, buljong, linser, oregano, basilika, paprikapulver, salt och peppar. Låt småputtra i cirka 20 minuter tills linserna är mjuka. 6. Koka spaghettin enligt anvisningarna på förpackningen. 7. Servera såsen med nykokt spaghetti och gärna färsk basilika på toppen.',10 ,3);
+
+
+-- Lägg till enheter
+INSERT INTO enhet (enhetNamn)
+VALUES ('Styck'), ('Gram'), ('dl'), ('cl'), ('msk'), ('tsk'), ('krm');
+
+
+
+-- Lägg till ingredienser
+INSERT INTO ingrediens (ingrediensNamn, ingrediensEnhet)
+VALUES ('Salt och Peppar', 6),('Lök', 1),('Ägg', 1),('Smör', 2),('Paprikapulver', 6),('Spaghetti', 2),('Vitlöksklyftor', 1),('Vatten', 5),('Tomatpuré', 5),('Falukorv', 2),
+       ('Vispgrädde', 3),('Vetemjöl', 3),('Oregano', 6),('Olivolja', 5),('Krossade Tomater', 2),('Parmesan', 3),('Mjölk', 3),('Ströbröd', 3),('Basilika', 6),('Morötter', 1),
+       ('Guanciale', 2),('Pecorino Romano', 3),('Makaroner', 2),('Prästost', 3),('Senap', 6),('Persilja', 5),('Tofu', 2),('Veganskt Margarin', 2),('Zucchini', 1),('Paprika', 1),
+       ('Havregrädde', 3),('Kikärtsmjöl', 3),('Näringsjäst', 5),('Västerbottensost', 3),('Kycklingfilé', 2),('Créme Fraiche', 3),('Ost', 3),('Timjan', 6),('Kryddpeppar', 7),('Blandfärs', 2),
+       ('Soya', 5),('Kikärtor', 2),('Maizena', 5),('Havremjölk', 3),('Matlagningsgrädde', 3),('Dijonsenap', 6),('Kokosmjölk', 3),('Curry', 6),('Spiskummin', 6),('Rapsolja', 6),
+       ('Knippe Koriander', 1),('Nötfärs', 2),('Grönsaksbuljong', 3),('Röda Linser', 3);
+
+-- lägg till carbonara recept
+INSERT INTO receptingrediens (receptingrediensRID, receptingrediensIID, mangd)
+VALUES (1, 6, 400),(1, 21, 150),(1, 3, 3),(1, 22, 1),(1, 16, 1),(1, 1, 6),
+       (2, 23, 300),(2, 10, 200),(2, 11, 2),(2, 24, 1),(2, 2, 1),(2, 4, 14),(2, 1, 8),(2, 25, 1),(2, 26, 4),
+       (3, 6, 400),(3, 27, 150),(3, 11, 2),(3, 16, 1),(3, 3, 3),(3, 2, 1),(3, 7, 2),(3, 1, 4);
+
+-- lägg till paj recept
+INSERT INTO receptingrediens (receptingrediensRID, receptingrediensIID, mangd)
+VALUES ( 4, 12, 3),( 4, 4, 125),( 4, 8, 2),( 4, 34, 3),( 4, 3, 3),( 4, 11, 2),( 4, 17, 1),( 4, 1, 3),
+       ( 5, 12, 3),( 5, 4, 125),( 5, 8, 2),( 5, 35, 300),( 5, 2, 1),( 5, 36, 2),( 5, 37, 2),( 5, 38, 1),( 5, 5, 1),( 5, 1, 6),
+       ( 6, 12, 3),( 6, 28, 100),( 6, 8, 2),( 6, 29, 1),( 6, 30, 1),( 6, 2, 1),( 6, 31, 2),( 6, 32, 1),( 6, 33, 2),( 6, 13, 1),( 6, 1, 5);
+
+-- lägg till köttbullar recept
+INSERT INTO receptingrediens (receptingrediensRID, receptingrediensIID, mangd)
+VALUES ( 7, 40, 500),( 7, 18, 1),( 7, 17, 1),( 7, 3, 1),( 7, 2, 1),( 7, 39, 1),( 7, 4, 14),( 7, 1, 8),
+       ( 8, 42, 400),( 8, 18, 1),( 8, 44, 1),( 8, 2, 1),( 8, 7, 1),( 8, 5, 1),( 8, 41, 1),( 8, 43, 1),( 8, 14, 1),( 8, 1, 5);
+
+-- lägg till stroganoff recept
+INSERT INTO receptingrediens (receptingrediensRID, receptingrediensIID, mangd)
+VALUES ( 9, 10, 400),( 9, 2, 1),( 9, 45, 2),( 9, 9, 2),( 9, 15, 100),( 9, 46, 1),( 9, 5, 1),( 9, 4, 14),( 9, 1, 5),
+       ( 10, 10, 400),( 10, 2, 1),( 10, 47, 2),( 10, 9, 1),( 10, 48, 1),( 10, 49, 1),( 10, 5, 1),( 10, 50, 1),( 10, 1, 5),( 10, 51, 1);
+
+-- lägg till Bolgonese recept
+INSERT INTO receptingrediens (receptingrediensRID, receptingrediensIID, mangd)
+VALUES ( 11, 52, 400),( 11, 2, 2),( 11, 7, 2),( 11, 20, 2),( 11, 15, 400),( 11, 9, 2),( 11, 8, 20),( 11, 13, 1),( 11, 19, 1),( 11, 1, 5),( 11, 6, 400),
+       ( 12, 54, 2),( 12, 2, 2),( 12, 7, 2),( 12, 20, 2),( 12, 15, 400),( 12, 9, 2),( 12, 53, 4),( 12, 13, 1),( 12, 19, 1),( 12, 5, 1),( 12, 1, 5),( 12, 14, 1),( 12, 6, 400);
+
+
+
+
+
+
+SELECT *
+FROM matratt;
+
+SELECT *
+FROM recept;
+
+SElECT *
+FROM enhet;
+
+SELECT *
+FROM ingrediens;
+
+SELECT *
+FROM receptingrediens;
+
+
+CREATE INDEX ingrediensLista
+ON ingrediens(ingrediensNamn);
+
+CREATE INDEX kokbok
+ON kokbok(kokbokNamn);
+
+-- KOKBOK RECEPT MATRÄTT
+
+SELECT kokbok.kokbokNamn, recept.receptNamn, matratt.matrattNamn
+FROM kokbok
+INNER JOIN recept ON kokbok.kokbokID = recept.receptKokbok
+INNER JOIN matratt ON recept.receptMatratt = matratt.matrattID
+ORDER BY receptNamn, kokbokNamn;
+
+
+-- Hitta recept från bonniers kokbok
+SELECT kokbok.kokbokNamn, recept.receptNamn, matratt.matrattNamn
+FROM kokbok
+INNER JOIN recept ON kokbok.kokbokID = recept.receptKokbok
+INNER JOIN matratt ON recept.receptMatratt = matratt.matrattID
+WHERE kokbokNamn = 'Bonniers Kokbok'
+ORDER BY receptNamn;
+
+
+
+-- Hämta Recept med hårdkodad ingrediens
+SELECT kokbok.kokbokNamn, recept.receptNamn, recept.receptText
+FROM recept
+INNER JOIN receptingrediens ON recept.receptID = receptingrediens.receptIngrediensRID
+INNER JOIN ingrediens ON receptingrediens.receptIngrediensIID = ingrediens.ingrediensID
+INNER JOIN enhet ON ingrediens.ingrediensEnhet = enhet.enhetID
+INNER JOIN kokbok ON recept.receptKokbok = kokbok.kokbokID
+WHERE ingrediens.ingrediensNamn = 'Lök';
+
+
+
+
+
+--  uppdatera Glennbonara-receptText så det ser ut som dom andra
+SET autocommit = 0;
+START TRANSACTION;
+UPDATE recept
+    SET receptText = 'Instruktioner: 1. Koka makaronerna enligt anvisningarna på förpackningen. Spara en liten del av pastavattnet för att eventuellt tunna ut såsen senare. 2. Hetta upp smöret eller oljan i en stor stekpanna på medelhög värme. Stek falukorven tills den får en fin gyllenbrun yta, cirka 5-7 minuter. 3. Tillsätt den hackade löken i pannan och fräs tills den blir mjuk och genomskinlig. 4. Häll i grädden och låt det sjuda i några minuter tills såsen börjar tjockna. 5. Tillsätt den rivna prästosten och rör om tills osten smälter och såsen blir krämig. Smaka av med salt, peppar och eventuellt en tesked senap för extra smak. 6. När makaronerna är färdigkokta, häll av vattnet och blanda dem i såsen. Om såsen är för tjock, tillsätt lite av pastavattnet för att få önskad konsistens. 7. Servera genast, gärna toppad med färsk persilja för en extra färgklick. '
+    WHERE receptID = 2 ;
+COMMIT;
+
+--  En transaction för att dubbla mängden på ett visst recept
+SET autocommit = 0;
+START TRANSACTION;
+    UPDATE receptingrediens SET mangd = mangd * 2
+    WHERE receptIngrediensRID= 3;
+COMMIT;
+ROLLBACK;
+
+-- kolla så att recepetet dubblades
+SELECT recept.receptNamn, recept.receptText, ingrediens.ingrediensNamn, receptingrediens.mangd, enhet.enhetNamn
+FROM recept
+INNER JOIN receptingrediens ON recept.receptID = receptingrediens.receptIngrediensRID
+INNER JOIN ingrediens ON receptingrediens.receptIngrediensIID = ingrediens.ingrediensID
+INNER JOIN enhet ON ingrediens.ingrediensEnhet = enhet.enhetID
+WHERE receptID = 3;
+
+
+
+
+-- Skapa funktion för att räkna recept som innehåller ägg
+
+DELIMITER $$
+CREATE FUNCTION recept_med_ägg() RETURNS INT
+DETERMINISTIC
+BEGIN
+    DECLARE recept_count INT;
+
+    SELECT COUNT(DISTINCT receptingrediens.receptIngrediensRID)
+        INTO recept_count
+        FROM receptingrediens
+        JOIN ingrediens On receptingrediens.receptIngrediensIID = ingrediens.ingrediensID
+    WHERE ingrediensNamn = 'Ägg';
+    RETURN recept_count;
+
+END $$
+
+SELECT recept_med_ägg();
+
+-- procedur där man kan söka fram recept utefter råvara
+DELIMITER //
+CREATE PROCEDURE ReceptMed(IN råvara VARCHAR(30))
+BEGIN
+	SELECT recept.receptNamn
+    FROM recept
+    INNER JOIN receptingrediens ON recept.receptID = receptingrediens.receptIngrediensRID
+    INNER JOIN ingrediens ON receptingrediens.receptIngrediensIID = ingrediens.ingrediensID
+	WHERE ingrediensNamn = råvara;
+END //
+
+CALL ReceptMed('Paprikapulver');
+
+
+
+-- procedur där man kan söka fram recept utefter råvara
+DELIMITER //
+CREATE PROCEDURE ReceptMed(IN råvara VARCHAR(30))
+BEGIN
+	SELECT recept.receptNamn
+    FROM recept
+    INNER JOIN receptingrediens ON recept.receptID = receptingrediens.receptIngrediensRID
+    INNER JOIN ingrediens ON receptingrediens.receptIngrediensIID = ingrediens.ingrediensID
+	WHERE ingrediensNamn = råvara;
+END //
+
+
+-- ----------------
+
+-- SKAPA VIEWS
+
+CREATE VIEW VegoRecept AS
+ SELECT kokbok.kokbokNamn, recept.receptNamn
+FROM kokbok
+INNER JOIN recept ON kokbok.kokbokID = recept.receptKokbok
+WHERE receptNamn LIKE '%veg%'
+ORDER BY receptNamn;
+
+CREATE VIEW UnikaRecept AS
+SELECT kokbok.kokbokNamn, recept.receptNamn
+FROM kokbok
+INNER JOIN recept ON kokbok.kokbokID = recept.receptKokbok
+WHERE recept.receptID IN (2, 5, 8, 10)
+ORDER BY recept.receptNamn;
+
